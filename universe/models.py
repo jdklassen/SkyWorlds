@@ -126,11 +126,11 @@ class Ship(models.Model):
     happiness = models.IntegerField(default=50) # 0-100
 
     farms = models.IntegerField(default=1)
-    food = models.IntegerField(default=0)
+    food = models.IntegerField(default=5)
     freezer_space = models.IntegerField(default=10)
 
     miners = models.IntegerField(default=1)
-    metal = models.IntegerField(default=0)
+    metal = models.IntegerField(default=5)
     cargo_space = models.IntegerField(default=10)
 
     research = models.IntegerField(default=0)
@@ -193,11 +193,70 @@ class Ship(models.Model):
             [get_location(x-1,y-1), get_location(x,y-1), get_location(x+1,y-1)],
         ]
 
+    def get_productivity(self):
+        return 1 + (self.happiness - 50) / 100
+
+
+# Effects are a tuple:
+# (Description, Resource modified, Good or Bad, Change)
+
+def _get_base_effects(ship):
+    effects = []
+
+    eaten = min(ship.population, ship.food)
+    effects.append(('Food Eaten', 'food', '-', -eaten))
+    starvation = ship.population - eaten
+    if starvation > 0:
+        effects.append(('Starvation', 'happiness', '-', -starvation * 10))
+        # Can't run out of population:
+        if starvation == ship.population:
+            starvation -= 1
+        if starvation:
+            effects.append(('Starvation', 'population', '-', -int(starvation / 2) - 1))
+    elif ship.food > 5:
+        if ship.population < ship.living_space:
+            effects.append(('Population Growth', 'population', '+', 1))
+            effects.append(('Population Growth', 'happiness', '+', 10))
+        else:
+            effects.append(('Overcrowding', 'happiness', '-', -10))
+
+    farm_max = min(ship.population, ship.farms)
+    effects.append(('Farm Surplus', 'food', '+', int(farm_max * ship.get_productivity() + 1)))
+
+    if ship.restlessness:
+        effects.append(('Restlessness', 'happiness', '-', -ship.restlessness))
+
+    return effects
+
 
 def get_effects_stay(ship, planet):
-    return []
+    effects = _get_base_effects(ship)
+
+    effects.append(('Planetary Farming', 'food', '+', ship.population * (planet.greenness + 25) // 25))
+
+    miner_max = min(ship.population, ship.miners)
+    effects.append(('Planetary Mining', 'metal', '+', int(miner_max * ship.get_productivity() * (planet.minerals + 25) // 25 + 1)))
+
+    effects.append(('Solid Ground Underfoot', 'happiness', '+', 10))
+    effects.append(('Restlessness', 'restlessness', '-', 4))
+
+    return effects
 
 
 def get_effects_travel(ship):
-    return []
+    effects = _get_base_effects(ship)
+
+    farm_maint = 2 * ship.farms - min(ship.farms, ship.maintainence_tech)
+    farm_decay = ship.metal - farm_maint
+    effects.append(('Farm Maintenance', 'metal', '-', -farm_maint))
+    # Always keep the last farm:
+    if farm_decay - ship.farms == 0:
+        farm_decay -= 0
+    if farm_decay > 0:
+        effects.append(('Farm Exhaustion', 'farms', '-', -int(farm_decay/2) - 1))
+
+    if ship.restlessness:
+        effects.append(('Traveling', 'restlessness', '+', -1))
+
+    return effects
 

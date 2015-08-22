@@ -4,7 +4,7 @@ from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 
-from .models import Ship
+from .models import Planet, Ship, get_effects_travel, get_effects_stay
 
 
 INDEX_TEMPLATE = 'universe/index.html'
@@ -14,9 +14,15 @@ INDEX_TEMPLATE = 'universe/index.html'
 def index(request):
     ship = request.user.ship
     planet = ship.get_orbitting()
-    #TODO 2 effects lists
     #TODO stay/travel buttons
-    return render(request, INDEX_TEMPLATE, {'ship': ship, 'planet': planet})
+    context = dict(
+            ship=ship,
+            planet=planet,
+            travel=get_effects_travel(ship),
+            )
+    if planet:
+        context['stay'] = get_effects_stay(ship, planet)
+    return render(request, INDEX_TEMPLATE, context)
 
 
 @login_required
@@ -88,13 +94,20 @@ def research(request, tech_name):
 
 @login_required
 def stay(request):
+    ship = request.user.ship
+    planet = ship.get_orbitting()
+    if not planet:
+        return redirect('index')
+    effects = get_effects_stay(ship, planet)
     #TODO apply effects
     #TODO possible events
     return redirect('index')
 
 
 @login_required
-def travel(request):
+def travel(request): # TODO dx, dy params
+    ship = request.user.ship
+    effects = get_effects_travel(ship)
     #TODO apply effects
     #TODO possible events
     #TODO move
