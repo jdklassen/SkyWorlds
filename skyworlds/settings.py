@@ -78,10 +78,12 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'skyworlds',
-        'USER': os.environ['OPENSHIFT_POSTGRESQL_DB_USERNAME'],
-        'PASSWORD': os.environ['OPENSHIFT_POSTGRESQL_DB_PASSWORD'],
-        'HOST': os.environ['OPENSHIFT_POSTGRESQL_DB_HOST'],
-        'PORT': os.environ['OPENSHIFT_POSTGRESQL_DB_PORT'],
+        # The .get(..., '') is to avoid the failure in a dev setting when
+        # dev_settings will override them shortly anyways.
+        'USER': os.environ.get('OPENSHIFT_POSTGRESQL_DB_USERNAME', ''),
+        'PASSWORD': os.environ.get('OPENSHIFT_POSTGRESQL_DB_PASSWORD', ''),
+        'HOST': os.environ.get('OPENSHIFT_POSTGRESQL_DB_HOST', ''),
+        'PORT': os.environ.get('OPENSHIFT_POSTGRESQL_DB_PORT', ''),
     }
 }
 
@@ -104,3 +106,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Allow override for development work.
+try:
+    from .dev_settings import *
+except ImportError:
+    pass
+
