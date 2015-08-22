@@ -3,4 +3,145 @@
 {% block title %}Home Page{% endblock %}
 
 {% block content %}
+<div class="ship">
+<h1>Your World-Ship</h1>
+
+{% if ship.current_event %}
+<div class="event">
+    <h2>{{ ship.get_current_event_display }}</h2>
+    <p>{{ ship.get_event_desc }}</p>
+</div>
+{% endif %}
+
+<h2>Population Sentiment</h2>
+<table>
+    <tr>
+        <td>Happiness</td>
+        <td>{{ ship.happiness }}</td>
+    </tr>
+    <tr>
+        <td>Restlessness</td>
+        <td>{{ ship.restlessness }}</td>
+    </tr>
+</table>
+<h2>Ship Stats</h2>
+<table>
+    <thead>
+        <td>Resource</td>
+        <td>Amount</td>
+        <td>Action</td>
+    </thead>
+    <tr>
+        <td>Population</td>
+        <td>{{ ship.population }} / {{ ship.living_space }}</td>
+        <td><a href="{% url "build" "living_space" %}">Expand Living Space</a></td>
+    </tr>
+    <tr>
+        <td>Food</td>
+        <td>{{ ship.food }} / {{ ship.freezer_space }}</td>
+        <td><a href="{% url "build" "freezer_space" %}">Expand Freezer Space</a></td>
+    </tr>
+    <tr>
+        <td>Metal</td>
+        <td>{{ ship.metal }} / {{ ship.cargo_space }}</td>
+        <td><a href="{% url "build" "cargo_space" %}">Expand Cargo Space</a></td>
+    </tr>
+    <tr>
+        <td>Farms</td>
+        <td>{{ ship.farms }}</td>
+        <td><a href="{% url "build" "farm" %}">Build Farm</a></td>
+    </tr>
+    <tr>
+        <td>Miners</td>
+        <td>{{ ship.miners }}</td>
+        <td><a href="{% url "build" "miner" %}">Build Miner</a></td>
+    </tr>
+    <tr>
+        <td>Total Ship Structure =</td>
+        <td>{{ ship.structure }} / {{ ship.structure_tech }}</td>
+        <td><a href="{% url "research" "structure" %}">Research better ship structure</a></td>
+    </tr>
+</table>
+<h2>Research</h2>
+<table>
+    <tr>
+        <td>Research</td>
+        <td>{{ ship.research }}</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>Structure</td>
+        <td>{{ ship.structure_tech }}</td>
+        <td>
+            <a href="{% url "research" "structure" %}">Reasearch</a>
+        </td>
+    </tr>
+    <tr>
+        <td>Maintainence</td>
+        <td>{{ ship.maintainence_tech }}</td>
+        <td>
+            <a href="{% url "research" "maintainence" %}">Reasearch</a>
+        </td>
+    </tr>
+    <tr>
+        <td>Contentment</td>
+        <td>{{ ship.contentment_tech }}</td>
+        <td>
+            <a href="{% url "research" "contentment" %}">Reasearch</a>
+        </td>
+    </tr>
+</table>
+<h2>Upgrades</h2>
+<table>
+    <thead>
+        <td>Upgrade</td>
+        <td>Present</td>
+        <td>Action</td>
+    </thead>
+    <tr>
+        <td>Sub-Surface Planetary Scanner</td>
+        <td>{% if ship.has_sub_surface_scanner %}Yes</td><td></td>
+        {% else %}No</td><td>
+            <a href="{% url "build" "sub_surface" %}">Build</a>
+        </td>{% endif %}
+    </tr>
+    <tr>
+        <td>Defence System</td>
+        <td>{% if ship.has_defense_system %}Yes</td><td></td>
+        {% else %}No</td><td>
+            <a href="{% url "build" "defences" %}">Build</a>
+        </td>{% endif %}
+    </tr>
+    <tr>
+        <td>Alien Translator</td>
+        <td>{% if ship.has_alien_translator %}Yes</td><td></td>
+        {% else %}No</td><td>
+            <a href="{% url "build" "translator" %}">Build</a>
+        </td>{% endif %}
+    </tr>
+    <tr>
+        <td>Particle Shield</td>
+        <td>{% if ship.has_particle_shield %}Yes</td><td></td>
+        {% else %}No</td><td>
+            <a href="{% url "build" "shield" %}">Build</a>
+        </td>{% endif %}
+    </tr>
+    <tr>
+        <td>Omni Anti-Virus Medication</td>
+        <td>{% if ship.has_omni_anti_virus %}Yes</td><td></td>
+        {% else %}No</td><td>
+            <a href="{% url "build" "anti_virus" %}">Build</a>
+        </td>{% endif %}
+    </tr>
+</table>
+</div>
+
+{% if planet %}
+<div class="planet">
+<h1>Planet</h1>
+Your World-Ship is currently orbiting a planet:
+<p>{{ planet.description }}</p>
+</div>
+{% endif %}
+
 {% endblock %}

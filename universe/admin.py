@@ -1,3 +1,8 @@
+
 from django.contrib import admin
 
-# Register your models here.
+from .models import Planet, Ship
+
+
+admin.site.register(Planet)
+admin.site.register(Ship)
