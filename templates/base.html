@@ -1,0 +1,13 @@
+{% load staticfiles %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}Base Title{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'universe/style.css' %}" />
+</head>
+<body>
+    {% block content %}
+    {% endblock %}
+</body>
+</html>
