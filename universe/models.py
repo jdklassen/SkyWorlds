@@ -6,6 +6,12 @@ from django.db import models
 from django.conf import settings
 
 
+class Galaxy(models.Model):
+    galaxy = models.IntegerField(default=0, unique=True)
+    X_RADIUS = models.IntegerField(default=20)
+    Y_RADIUS = models.IntegerField(default=20)
+
+
 def _random_choice(choices):
     """
     Choose one from the django models choices option, returning its
@@ -102,6 +108,34 @@ def get_location(x, y):
         return None
 
 
+def get_dir(dx, dy):
+    N_S = {1:'N', 0:'', -1:'S'}
+    E_W = {1:'E', 0:'', -1:'W'}
+    return N_S[dy] + E_W[dx]
+
+
+def get_lrs(ship):
+    galaxy = Galaxy.objects.get(galaxy=0)
+    x_s = (-1, 0, 1)
+    y_s = (-1, 0, 1)
+    if ship.x == galaxy.X_RADIUS:
+        x_s = x_s[:2]
+    elif ship.x == -galaxy.X_RADIUS:
+        x_s = x_s[1:]
+    if ship.y == galaxy.Y_RADIUS:
+        y_s = y_s[:2]
+    elif ship.y == -galaxy.Y_RADIUS:
+        y_s = y_s[1:]
+    coords = [
+            [(x, y) for x in x_s]
+                for y in y_s]
+    planets = [
+            [(get_dir(*loc), loc[0], loc[1], get_location(ship.x + loc[0], ship.y + loc[1])) for loc in row]
+                for row in coords]
+    planets.reverse()
+    return planets
+
+
 EVENTS = (
     (0, 'Nothing'),
     (1, 'Alien Ruins Discovered'),
@@ -183,15 +217,6 @@ class Ship(models.Model):
 
     def get_orbitting(self):
         return get_location(self.x, self.y)
-
-    def get_neighbourhood(self):
-        x = self.x
-        y = self.y
-        return [
-            [get_location(x-1,y+1), get_location(x,y+1), get_location(x+1,y+1)],
-            [get_location(x-1,y  ), get_location(x,y  ), get_location(x+1,y  )],
-            [get_location(x-1,y-1), get_location(x,y-1), get_location(x+1,y-1)],
-        ]
 
     def get_productivity(self):
         return 1 + (self.happiness - 50) / 100

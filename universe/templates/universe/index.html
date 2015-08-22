@@ -27,9 +27,11 @@
 <h2>Ship Stats</h2>
 <table>
     <thead>
-        <td>Resource</td>
-        <td>Amount</td>
-        <td>Action</td>
+        <tr>
+            <td>Resource</td>
+            <td>Amount</td>
+            <td>Action</td>
+        </tr>
     </thead>
     <tr>
         <td>Population</td>
@@ -94,9 +96,11 @@
 <h2>Upgrades</h2>
 <table>
     <thead>
-        <td>Upgrade</td>
-        <td>Present</td>
-        <td>Action</td>
+        <tr>
+            <td>Upgrade</td>
+            <td>Present</td>
+            <td>Action</td>
+        </tr>
     </thead>
     <tr>
         <td>Sub-Surface Planetary Scanner</td>
@@ -136,11 +140,15 @@
 </table>
 </div>
 
+<div class="location">
+    <h1>Sector: {{ ship.x }}, {{ ship.y }}</h1>
 {% if planet %}
-<div class="planet">
-<h1>Planet</h1>
-Your World-Ship is currently orbiting a planet:
-<p>{{ planet.description }}</p>
+    <div class="planet">
+    <h2>Planet:</h2>
+    Your World-Ship is currently orbiting a planet:
+    <p>{{ planet.description }}</p>
+    </div>
+{% endif %}
 </div>
 
 <div class="choices">
@@ -149,6 +157,27 @@ Your World-Ship is currently orbiting a planet:
         {% with effects=travel %}
         {% include "universe/effects.html" %}
         {% endwith %}
+        <h4>Set Course:</h4>
+        <table>
+            {% for row in lrs %}
+            <tr>
+                {% for planet in row %}
+                <td>
+                {% if planet.1 != 0 or planet.2 != 0 %}
+                <a href="{% url "travel" planet.1 planet.2 %}">{% endif %}
+
+                {% if planet.3 %}
+                    Planet
+                {% else %}
+                    {{ planet.0 }}
+                {% endif %}
+
+                {% if planet.1 != 0 or planet.2 != 0 %}</a>{% endif %}
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
     </div>
     {% if stay %}
     <div class="stay">
@@ -156,9 +185,9 @@ Your World-Ship is currently orbiting a planet:
         {% with effects=stay %}
         {% include "universe/effects.html" %}
         {% endwith %}
+        <a href="{% url "stay" %}">Settle here for a while</a>
     </div>
     {% endif %}
 </div>
-{% endif %}
 
 {% endblock %}
