@@ -19,11 +19,11 @@
 <table>
     <tr>
         <td>Happiness</td>
-        <td>{{ ship.happiness }}</td>
+        <td>{{ ship.happiness }}{% r_icon "happiness" %}</td>
     </tr>
     <tr>
         <td>Restlessness</td>
-        <td>{{ ship.restlessness }}</td>
+        <td>{{ ship.restlessness }}{% r_icon "restlessness" %}</td>
     </tr>
 </table>
 <h2>Ship Stats</h2>
@@ -37,27 +37,27 @@
     </thead>
     <tr>
         <td>Population</td>
-        <td>{{ ship.population }} / {{ ship.living_space }}</td>
+        <td>{{ ship.population }} {% r_icon "population" %} / {{ ship.living_space }}</td>
         <td>{% afford_build "living_space" "Expand Living Space" %}</td>
     </tr>
     <tr>
         <td>Food</td>
-        <td>{{ ship.food }} / {{ ship.freezer_space }}</td>
+        <td>{{ ship.food }} {% r_icon "food" %} / {{ ship.freezer_space }}</td>
         <td>{% afford_build "freezer_space" "Expand Freezer Space" %}</td>
     </tr>
     <tr>
         <td>Metal</td>
-        <td>{{ ship.metal }} / {{ ship.cargo_space }}</td>
+        <td>{{ ship.metal }} {% r_icon "metal" %} / {{ ship.cargo_space }}</td>
         <td>{% afford_build "cargo_space" "Expand Cargo Space" %}</td>
     </tr>
     <tr>
         <td>Farms</td>
-        <td>{{ ship.farms }}</td>
+        <td>{{ ship.farms }} {% r_icon "farms" %} </td>
         <td>{% afford_build "farm" "Build Farm" %}</td>
     </tr>
     <tr>
         <td>Miners</td>
-        <td>{{ ship.miners }}</td>
+        <td>{{ ship.miners }} {% r_icon "miners" %} </td>
         <td>{% afford_build "miner" "Build Miner" %}</td>
     </tr>
     <tr>
@@ -70,7 +70,7 @@
 <table>
     <tr>
         <td>Research</td>
-        <td>{{ ship.research }}</td>
+        <td>{{ ship.research }} {% r_icon "research" %}</td>
         <td></td>
     </tr>
     <tr>
@@ -169,7 +169,7 @@
                 <a href="{% url "travel" planet.1 planet.2 %}">{% endif %}
 
                 {% if planet.3 %}
-                    Planet
+                    {% p_icon planet.3 %}
                 {% else %}
                     {{ planet.0 }}
                 {% endif %}
