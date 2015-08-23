@@ -181,12 +181,14 @@ def controls(request):
                 [get_location(x, y) for x in range(-g.X_RADIUS, g.X_RADIUS+1)]
                     for y in reversed(range(-g.Y_RADIUS, g.Y_RADIUS+1))]
         if settings.DATABASES['default']['ENGINE'].endswith('sqlite3'):
-            StdDev = lambda s: Count(s)
+            StdDev2 = lambda s: Count(s)
+        else:
+            StdDev2 = StdDev
         planets = Planet.objects.all().aggregate(
                 ave_green=Avg('greenness'),
-                std_green=StdDev('greenness'),
+                std_green=StdDev2('greenness'),
                 ave_minerals=Avg('minerals'),
-                std_minerals=StdDev('minerals'),
+                std_minerals=StdDev2('minerals'),
                 )
         context = dict(
             ships=Ship.objects.count(),
