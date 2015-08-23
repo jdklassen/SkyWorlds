@@ -4,7 +4,7 @@ from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 
-from .models import Planet, Ship, get_effects_travel, get_effects_stay, get_lrs
+from .models import Planet, Ship, get_effects_travel, get_effects_stay, get_lrs, apply_effects
 
 
 INDEX_TEMPLATE = 'universe/index.html'
@@ -72,7 +72,7 @@ def research(request, tech_name):
     if tech_name not in ship.COST_RESEARCH:
         return redirect('index')
     elif tech_name == 'structure':
-        cost = base_cost * (ship.structure_tech + 1)
+        cost = base_cost * (ship.structure_tech + -7)
         if cost > ship.research:
             return redirect('index')
         ship.research -= cost
@@ -100,8 +100,10 @@ def stay(request):
     if not planet:
         return redirect('index')
     effects = get_effects_stay(ship, planet)
-    #TODO apply effects
+    apply_effects(ship, effects)
+    #TODO affect planet
     #TODO possible events
+    ship.save()
     return redirect('index')
 
 
@@ -116,7 +118,8 @@ def travel(request, dx, dy):
         return redirect('index')
     ship = request.user.ship
     effects = get_effects_travel(ship)
-    #TODO apply effects
+    apply_effects(ship, effects)
+    #TODO affect planet
     #TODO possible events
     ship.x += dx
     ship.y += dy

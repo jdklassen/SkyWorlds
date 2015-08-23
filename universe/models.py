@@ -41,7 +41,7 @@ PLANET_ORBITS = (
 )
 
 PLANET_DESC = '''
-A {size}, {greeness} planet, {orbit}, with {minerals} minerals hidden below the ground.
+A {size}, {greeness} planet, {orbit}, with {minerals} minerals hidden below the surface.
 '''
 
 class Planet(models.Model):
@@ -169,7 +169,7 @@ class Ship(models.Model):
 
     research = models.IntegerField(default=0)
     structure_tech = models.IntegerField(default=8)
-    maintainence_tech = models.IntegerField(default=1)
+    maintainence_tech = models.IntegerField(default=0)
     contentment_tech = models.IntegerField(default=0)
 
     current_event = models.IntegerField(choices=EVENTS, default=0)
@@ -209,9 +209,9 @@ class Ship(models.Model):
     )
 
     COST_RESEARCH = dict(
-        structure=100,
-        maintainence=100,
-        contentment=100,
+        structure=10,
+        maintainence=10,
+        contentment=10,
     )
 
 
@@ -242,14 +242,17 @@ def _get_base_effects(ship):
         if ship.population < ship.living_space:
             effects.append(('Population Growth', 'population', '+', 1))
             effects.append(('Population Growth', 'happiness', '+', 10))
+            effects.append(('Population Growth', 'food', '-', -5))
         else:
             effects.append(('Overcrowding', 'happiness', '-', -10))
 
     farm_max = min(ship.population, ship.farms)
-    effects.append(('Farm Surplus', 'food', '+', int(farm_max * ship.get_productivity() + 1)))
+    effects.append(('Farm Surplus', 'food', '+', int(farm_max * ship.get_productivity() + 0.5)))
 
     if ship.restlessness:
         effects.append(('Restlessness', 'happiness', '-', -ship.restlessness))
+
+    effects.append(('Research', 'research', '+', ship.population))
 
     return effects
 
@@ -263,7 +266,7 @@ def get_effects_stay(ship, planet):
     effects.append(('Planetary Mining', 'metal', '+', int(miner_max * ship.get_productivity() * (planet.minerals + 25) // 25 + 1)))
 
     effects.append(('Solid Ground Underfoot', 'happiness', '+', 10))
-    effects.append(('Restlessness', 'restlessness', '-', 4))
+    effects.append(('Restlessness', 'restlessness', '-', 2))
 
     return effects
 
@@ -272,7 +275,7 @@ def get_effects_travel(ship):
     effects = _get_base_effects(ship)
 
     farm_maint = 2 * ship.farms - min(ship.farms, ship.maintainence_tech)
-    farm_decay = ship.metal - farm_maint
+    farm_decay = farm_maint - ship.metal
     effects.append(('Farm Maintenance', 'metal', '-', -farm_maint))
     # Always keep the last farm:
     if farm_decay - ship.farms == 0:
@@ -284,4 +287,16 @@ def get_effects_travel(ship):
         effects.append(('Traveling', 'restlessness', '+', -1))
 
     return effects
+
+
+def apply_effects(ship, effects):
+    for effect in effects:
+        _desc, stat, _good, diff = effect
+        setattr(ship, stat, diff + getattr(ship, stat))
+
+    ship.population = max(1, min(ship.population, ship.living_space))
+    ship.food = max(0, min(ship.food, ship.freezer_space))
+    ship.metal = max(0, min(ship.metal, ship.cargo_space))
+    ship.happiness = max(0, min(ship.happiness, 100))
+    ship.restlessness = max(0, min(ship.restlessness, 100))
 
