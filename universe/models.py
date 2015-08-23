@@ -1,5 +1,6 @@
 
 import random
+from datetime import datetime, timedelta
 
 from django.db import models
 from django.db.models import F
@@ -50,6 +51,7 @@ class Planet(models.Model):
     y = models.IntegerField()
     size = models.IntegerField(choices=PLANET_SIZES)
     orbit = models.IntegerField(choices=PLANET_ORBITS)
+    last_charred = models.DateTimeField(null=True)
 
     greenness = models.IntegerField() # 0 - 100
     minerals = models.IntegerField() # 0 - 100
@@ -95,12 +97,15 @@ class Planet(models.Model):
             return 'traces of'
 
     def description(self):
-        return PLANET_DESC.format(
+        desc = PLANET_DESC.format(
                 size=self.get_size_display(),
                 greenness=self.get_greenness_desc(),
                 orbit=self.get_orbit_display(),
                 minerals=self.get_mineral_desc()
                 )
+        if self.last_charred is not None and datetime.now() - self.last_charred < timedelta(minutes=5):
+            desc += ' A Large portion of the surface looks charred, as if there was a great fire recently.'
+        return desc
 
 def get_location(x, y):
     try:
@@ -317,6 +322,7 @@ def apply_effects(ship, effects):
 
 def leave_planet(planet):
     planet.greenness =  3 * F('greenness') / 4
+    planet.last_charred = datetime.now()
     planet.save()
 
 
