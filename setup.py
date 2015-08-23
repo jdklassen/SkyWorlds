@@ -2,8 +2,8 @@ from setuptools import setup
 
 setup(
     name='skyworlds',
-    version='0.1',
-    description='OpenShift App for the SkyWolrds Game',
+    version='1.0',
+    description='OpenShift App for the SkyWorlds Game',
     author='Josiah Klassen',
     author_email='jkla@telus.net',
     url='http://www.python.org/sigs/distutils-sig/',
