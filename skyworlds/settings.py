@@ -21,9 +21,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = ')oo*47-+5b6&c1+al(h=y6u)1)#1)hf682x15m0rfw&fqingw)'
+if 'OPENSHIFT_SECRET_TOKEN' in os.environ:
+    SECRET_KEY = os.environ['OPENSHIFT_SECRET_TOKEN']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
