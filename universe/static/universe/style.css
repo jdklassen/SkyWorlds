@@ -1,0 +1,81 @@
+
+body {
+    background: #000;
+    color: #88bbff;
+    font-size: 12px;
+}
+
+div.ship-status {
+}
+
+div.left-ship-status {
+    float: left;
+    width: 250px;
+}
+
+div.location {
+}
+
+div.planet {
+    float: left;
+}
+
+div.people {
+}
+
+div.stats {
+}
+
+div.improvements {
+    clear: both;
+}
+
+div.research {
+    width: 250px;
+    float: left;
+}
+
+div.choices {
+    clear: both;
+}
+
+div.travel {
+    width: 250px;
+    float: left;
+}
+
+img.r_icon {
+    width: 12px;
+    height: 12px;
+}
+
+a {
+    color: #3D46FF;
+}
+
+.costly {
+    color: #656565;
+}
+
+.good {
+    color: #00ff00;
+}
+
+.bad {
+    color: #ff0000;
+}
+
+.travel-table td {
+    width: 32px;
+    height: 32px;
+    text-align: center;
+    border: 1px solid #8bf;
+}
+
+div.ship {
+    background: no-repeat top right url(/static/universe/world_ship_image.png);
+}
+
+.helptext {
+    color: #5d7595;
+}

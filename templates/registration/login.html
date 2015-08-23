@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 
+{% load staticfiles %}
+
 {% block content %}
+
+<div class="background">
+    <img alt="" src="{% static "universe/world_ship_image.png" %}">
+</div>
 
 <form method="post" action="{% url 'django.contrib.auth.views.login' %}">
 {% csrf_token %}

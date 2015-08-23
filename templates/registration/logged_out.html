@@ -1,11 +1,19 @@
 {% extends "base.html" %}
 
+{% load staticfiles %}
+
 {% block title %}Logged Out{% endblock %}
 
 {% block content %}
+
+<div class="background">
+    <img alt="" src="{% static "universe/world_ship_image.png" %}">
+</div>
+
 <h1>Logged Out</h1>
 
 <p>You have successfully logged out. Hope you enjoyed your stay!</p>
 
 <a href="{% url "index" %}">Return to Login Screen</a>
+
 {% endblock %}

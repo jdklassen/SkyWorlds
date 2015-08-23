@@ -32,7 +32,7 @@ PLANET_SIZES = (
 )
 
 PLANET_ORBITS = (
-    (0, 'unbearably hot and spinning close the its sun'),
+    (0, 'unbearably hot and spinning close its sun'),
     (1, 'warm due to its proximity to the sun'),
     (2, 'with a pleasant warthm from the sun'),
     (3, 'of a temperate climate'),
@@ -42,7 +42,7 @@ PLANET_ORBITS = (
 )
 
 PLANET_DESC = '''
-A {size}, {greenness} planet, {orbit}, with {minerals} minerals hidden below the surface.
+a {size}, {greenness} planet, {orbit}, with {minerals} minerals hidden below the surface.
 '''
 
 class Planet(models.Model):

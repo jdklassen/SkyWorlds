@@ -6,7 +6,7 @@
 
 {% block content %}
 <div class="ship">
-<h1>Your World-Ship</h1>
+<h1>Your World-Ship, Sector: {{ ship.x }}, {{ ship.y }}</h1>
 
 {% if ship.current_event %}
 <div class="event">
@@ -15,6 +15,21 @@
 </div>
 {% endif %}
 
+<div class="ship-status">
+
+<div class="left-ship-status">
+
+<div class="location">
+{% if planet %}
+    <h2>Planet:</h2>
+    <div class="planet">
+    {% p_icon planet %}
+    </div>
+    <p>Your World-Ship is currently orbiting {{ planet.description }}</p>
+{% endif %}
+</div>
+
+<div class="people">
 <h2>Population Sentiment</h2>
 <table>
     <tr>
@@ -26,7 +41,12 @@
         <td>{{ ship.restlessness }}{% r_icon "restlessness" %}</td>
     </tr>
 </table>
-<h2>Ship Stats</h2>
+</div>
+
+</div>
+
+<div class="stats">
+<h2>Ship Status</h2>
 <table>
     <thead>
         <tr>
@@ -66,6 +86,11 @@
         <td>{% afford_research "structure" "Research better ship structure" %}</td>
     </tr>
 </table>
+</div>
+</div>
+
+<div class="improvements">
+<div class="research">
 <h2>Research</h2>
 <table>
     <tr>
@@ -95,6 +120,9 @@
         </td>
     </tr>
 </table>
+</div>
+
+<div class="upgrades">
 <h2>Upgrades</h2>
 <table>
     <thead>
@@ -141,16 +169,6 @@
     </tr>
 </table>
 </div>
-
-<div class="location">
-    <h1>Sector: {{ ship.x }}, {{ ship.y }}</h1>
-{% if planet %}
-    <div class="planet">
-    <h2>Planet:</h2>
-    Your World-Ship is currently orbiting a planet:
-    <p>{{ planet.description }}</p>
-    </div>
-{% endif %}
 </div>
 
 <div class="choices">
@@ -160,7 +178,7 @@
         {% include "universe/effects.html" %}
         {% endwith %}
         <h4>Set Course:</h4>
-        <table>
+        <table class="travel-table">
             {% for row in lrs %}
             <tr>
                 {% for planet in row %}

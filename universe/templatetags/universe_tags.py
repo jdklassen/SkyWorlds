@@ -46,7 +46,7 @@ _ICON_TYPES = {
 def r_icon(type):
     if type in _ICON_TYPES:
         path = static('universe/%s_icon.png' % type)
-        return '<img alt="%s" src="%s">' % (type, path)
+        return '<img class="r_icon" alt="%s" src="%s">' % (type, path)
     return type
 
 @register.simple_tag
@@ -57,5 +57,5 @@ def p_icon(planet):
     elif planet.greenness > 20:
         colour = 'desert'
     path = static('universe/planet_%s_icon.png' % colour)
-    return '<img alt="%s planet" src="%s">' % (colour, path)
+    return '<img class="p_icon" alt="%s planet" src="%s">' % (colour, path)
 
