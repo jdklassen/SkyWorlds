@@ -99,7 +99,7 @@ def stay(request):
     # Affect planet:
     mine_planet(planet, ship.miners)
 
-    #TODO possible events
+    ship.check_for_event()
 
     ship.save()
     return redirect('index')
@@ -125,11 +125,12 @@ def travel(request, dx, dy):
     if planet:
         leave_planet(planet)
 
-    #TODO possible events
-
     # Move ship:
     ship.x += dx
     ship.y += dy
+
+    ship.check_for_event()
+
     ship.save()
     return redirect('index')
 

@@ -239,9 +239,84 @@ class Ship(models.Model):
     def get_productivity(self):
         return 1 + (self.happiness - 50) / 100
 
+    def check_for_event(self):
+        self.current_event = 0
+        if self.get_orbitting():
+            ruins = random.random()
+            if self.has_sub_surface_scanner and ruins > .95:
+                self.current_event = 1
+            elif ruins > .99:
+                self.current_event = 1
+            elif random.random() > .99:
+                self.current_event = 3
+            elif random.random() > .99:
+                self.current_event = 5
+        else:
+            if random.random() > .99:
+                self.current_event = 2
+            elif random.random() > .99:
+                self.current_event = 4
+
+    def get_event_desc(ship):
+        if ship.current_event == 1:
+            return 'We unearthed some valuble materials in an ancient alien ruin.  I wonder who they were.'
+        if ship.current_event == 2:
+            if ship.has_defense_system:
+                return 'We beat off some pirates and made a hansome salvage haul.'
+            else:
+                return 'We beat off the pirates in a drawn-out and costly fight.'
+        if ship.current_event == 3:
+            if ship.has_alien_translator:
+                return 'We discovered some primitive aliens, and made some profitable trades.'
+            else:
+                return 'We discovered some primitive, but truculent aliens.  We have begun constant watches...'
+        if ship.current_event == 4:
+            if ship.has_particle_shield:
+                return 'Some measurements we were able to make in this nebula might require some profound to some of our theories of matter.'
+            else:
+                return 'The particles from that nebula wreaked havoc on our farms.'
+        if ship.current_event == 5:
+            if ship.has_omni_anti_virus:
+                return 'Our medical scientists have staved off a potentially catastrophic virus infection.'
+            else:
+                return 'A novel virus pandemic has cost us many lives...'
+        return 'Nothing of interest happened...'
+
 
 # Effects are a tuple:
 # (Description, Resource modified, Good or Bad, Change)
+
+def _get_effects_event(ship):
+    effects = []
+
+    if ship.current_event == 1:
+        effects.append(('Alien Ruins', 'metal', '+', 5))
+    if ship.current_event == 2:
+        if ship.has_defense_system:
+            effects.append(('Pirate Salvage', 'metal', '+', 5))
+        else:
+            effects.append(('Pirate Looting', 'metal', '-', -2))
+            effects.append(('Pirate Looting', 'food', '-', -2))
+    if ship.current_event == 3:
+        if ship.has_alien_translator:
+            effects.append(('Friendly Aliens', 'metal', '+', 2))
+        else:
+            effects.append(('Hostile Aliens', 'population', '-', -2))
+    if ship.current_event == 4:
+        if ship.has_particle_shield:
+            effects.append(('Nebula Measurements', 'research', '+', 10))
+        else:
+            effects.append(('Nebula Damage Repair', 'metal', '-', -10))
+            if ship.farms > 1:
+                effects.append(('Nebula Damage', 'farms', '-', -1))
+    if ship.current_event == 5:
+        if ship.has_omni_anti_virus:
+            effects.append(('Anti-Virus Research', 'research', '-', 10))
+        else:
+            effects.append(('Novel Virus Strain', 'population', '-', -3))
+
+    return effects
+
 
 def _get_base_effects(ship):
     effects = []
@@ -271,6 +346,8 @@ def _get_base_effects(ship):
         effects.append(('Restlessness', 'happiness', '-', -ship.restlessness))
 
     effects.append(('Research', 'research', '+', ship.population))
+
+    effects.extend(_get_effects_event(ship))
 
     return effects
 
@@ -316,6 +393,9 @@ def apply_effects(ship, effects):
     ship.population = max(1, min(ship.population, ship.living_space))
     ship.food = max(0, min(ship.food, ship.freezer_space))
     ship.metal = max(0, min(ship.metal, ship.cargo_space))
+    ship.farms = max(1, ship.farms)
+    ship.miners = max(1, ship.miners)
+    ship.research = max(0, ship.research)
     ship.happiness = max(0, min(ship.happiness, 100))
     ship.restlessness = max(0, min(ship.restlessness, 100))
 
