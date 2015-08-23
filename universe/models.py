@@ -275,9 +275,10 @@ def get_effects_stay(ship, planet):
 def get_effects_travel(ship):
     effects = _get_base_effects(ship)
 
-    farm_maint = 2 * ship.farms - min(ship.farms, ship.maintainence_tech)
+    farm_maint = ship.farms - min(2 * ship.farms // 3, ship.maintainence_tech)
     farm_decay = farm_maint - ship.metal
-    effects.append(('Farm Maintenance', 'metal', '-', -farm_maint))
+    if farm_maint:
+        effects.append(('Farm Maintenance', 'metal', '-', -farm_maint))
     # Always keep the last farm:
     if farm_decay - ship.farms == 0:
         farm_decay -= 0
