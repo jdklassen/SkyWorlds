@@ -4,7 +4,9 @@ from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 
-from .models import Planet, Ship, get_effects_travel, get_effects_stay, get_lrs, apply_effects
+from .models import Planet, Ship
+from .models import get_effects_travel, get_effects_stay, get_lrs
+from .models import apply_effects, mine_planet, leave_planet
 
 
 INDEX_TEMPLATE = 'universe/index.html'
@@ -99,10 +101,16 @@ def stay(request):
     planet = ship.get_orbitting()
     if not planet:
         return redirect('index')
+
+    # Apply effects:
     effects = get_effects_stay(ship, planet)
     apply_effects(ship, effects)
-    #TODO affect planet
+
+    # Affect planet:
+    mine_planet(planet, ship.miners)
+
     #TODO possible events
+
     ship.save()
     return redirect('index')
 
@@ -117,10 +125,19 @@ def travel(request, dx, dy):
     if dx not in (-1, 0, 1) or dy not in (-1, 0, 1):
         return redirect('index')
     ship = request.user.ship
+
+    # Apply effects:
     effects = get_effects_travel(ship)
     apply_effects(ship, effects)
-    #TODO affect planet
+
+    # Affect planet:
+    planet = ship.get_orbitting()
+    if planet:
+        leave_planet(planet)
+
     #TODO possible events
+
+    # Move ship:
     ship.x += dx
     ship.y += dy
     ship.save()

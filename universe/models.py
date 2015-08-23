@@ -2,6 +2,7 @@
 import random
 
 from django.db import models
+from django.db.models import F
 
 from django.conf import settings
 
@@ -41,7 +42,7 @@ PLANET_ORBITS = (
 )
 
 PLANET_DESC = '''
-A {size}, {greeness} planet, {orbit}, with {minerals} minerals hidden below the surface.
+A {size}, {greenness} planet, {orbit}, with {minerals} minerals hidden below the surface.
 '''
 
 class Planet(models.Model):
@@ -96,7 +97,7 @@ class Planet(models.Model):
     def description(self):
         return PLANET_DESC.format(
                 size=self.get_size_display(),
-                greeness=self.get_greenness_desc(),
+                greenness=self.get_greenness_desc(),
                 orbit=self.get_orbit_display(),
                 minerals=self.get_mineral_desc()
                 )
@@ -299,4 +300,14 @@ def apply_effects(ship, effects):
     ship.metal = max(0, min(ship.metal, ship.cargo_space))
     ship.happiness = max(0, min(ship.happiness, 100))
     ship.restlessness = max(0, min(ship.restlessness, 100))
+
+
+def leave_planet(planet):
+    planet.greenness =  3 * F('greenness') / 4
+    planet.save()
+
+
+def mine_planet(planet, miners):
+    planet.minerals = F('minerals') - min(miners // 2, 1)
+    planet.save()
 
