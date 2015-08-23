@@ -149,6 +149,7 @@ EVENTS = (
 
 class Ship(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL)
+    name = models.CharField(max_length=100)
     tutorial_step = models.IntegerField(default=0)
 
     x = models.IntegerField(default=0)

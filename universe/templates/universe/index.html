@@ -6,7 +6,7 @@
 
 {% block content %}
 <div class="ship">
-<h1>Your World-Ship, Sector: {{ ship.x }}, {{ ship.y }}</h1>
+    <h1>Your World-Ship, {{ ship.name }}, Sector: {{ ship.x }}, {{ ship.y }}</h1>
 
 {% if ship.current_event %}
 <div class="event">
