@@ -140,6 +140,11 @@ def travel(request, dx, dy):
     return redirect('index')
 
 
+def _cart_cross(xs, ys):
+    return [ (x,y) for x in xs
+                for y in ys]
+
+
 @login_required
 def populate(request, x=20, y=20, p=5, forced=False):
     x = int(x)
@@ -151,24 +156,28 @@ def populate(request, x=20, y=20, p=5, forced=False):
             if not forced and (x < galaxy.X_RADIUS or y < galaxy.Y_RADIUS):
                 # Can't shrink the world without a reset!
                 return HttpResponseBadRequest('Must use Force to shink the Galaxy!')
-            xs = list(range(-x,-galaxy.X_RADIUS)) + list(range(galaxy.X_RADIUS + 1, x + 1))
-            ys = list(range(-y,-galaxy.Y_RADIUS)) + list(range(galaxy.Y_RADIUS + 1, y + 1))
+            new_xs = list(range(-x, -galaxy.X_RADIUS)) + list(range(galaxy.X_RADIUS + 1, x + 1))
+            mid_xs = list(range(-galaxy.X_RADIUS, galaxy.X_RADIUS + 1))
+            all_ys = list(range(-y, y + 1))
+            new_ys = list(range(-y, -galaxy.Y_RADIUS)) + list(range(galaxy.Y_RADIUS + 1, y + 1))
+            coords = _cart_cross(new_xs, all_ys) + _cart_cross(mid_xs, new_ys)
             galaxy.X_RADIUS = x
             galaxy.Y_RADIUS = y
         except Galaxy.DoesNotExist:
             galaxy = Galaxy(galaxy=0, X_RADIUS=x, Y_RADIUS=y)
             xs = range(-x-1, x+2)
             ys = range(-y-1, y+2)
+            coords = _cart_cross(xs, ys)
         galaxy.save()
         if forced:
-            xs = range(-x-1, x+2)
-            ys = range(-y-1, y+2)
+            xs = range(-x, x + 1)
+            ys = range(-y, y + 1)
+            coords = _cart_cross(xs, ys)
             Planet.objects.all().delete()
-        for x in xs:
-            for y in ys:
-                if random.randint(1,p) == 1:
-                    planet = Planet.create_planet(x=x, y=y)
-                    planet.save()
+        for i, j in coords:
+            if random.randint(1,p) == 1:
+                planet = Planet.create_planet(x=i, y=j)
+                planet.save()
         return redirect('controls')
     return redirect('index')
 
@@ -194,7 +203,7 @@ def controls(request):
             ships=Ship.objects.count(),
             llrs=llrs,
             planets=planets,
-            galaxy=galaxy,
+            galaxy=g,
             )
         return render(request, CONTROL_PANEL, context)
     return redirect('index')
