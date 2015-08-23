@@ -194,6 +194,7 @@ def controls(request):
             ships=Ship.objects.count(),
             llrs=llrs,
             planets=planets,
+            galaxy=galaxy,
             )
         return render(request, CONTROL_PANEL, context)
     return redirect('index')
