@@ -51,12 +51,11 @@ class Planet(models.Model):
     y = models.IntegerField()
     size = models.IntegerField(choices=PLANET_SIZES)
     orbit = models.IntegerField(choices=PLANET_ORBITS)
+
     last_charred = models.DateTimeField(null=True)
 
     greenness = models.IntegerField() # 0 - 100
     minerals = models.IntegerField() # 0 - 100
-
-    #TODO Departed time, charred desc
 
     class Meta:
         unique_together = (
@@ -68,8 +67,8 @@ class Planet(models.Model):
         size = _random_choice(PLANET_SIZES)
         orbit = _random_choice(PLANET_ORBITS)
         greenness = random.randint(0, 100)
-        minerals = random.randint(45, 100 - greenness)
-        planet = cls(x=x, y=y, size=size, greenness=greenness, minerals=minerals)
+        minerals = min(45,random.randint(0, 100 - greenness))
+        planet = cls(x=x, y=y, size=size, orbit=orbit, greenness=greenness, minerals=minerals)
         return planet
 
     def get_greenness_desc(self):

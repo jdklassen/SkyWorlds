@@ -1,22 +1,27 @@
 
+import random
+
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
+from django.http import HttpResponseBadRequest
+from django.db.models import Avg, StdDev, Count
 
-from .models import Planet, Ship
+from .models import Galaxy, Planet, Ship
 from .models import get_effects_travel, get_effects_stay, get_lrs
 from .models import apply_effects, mine_planet, leave_planet
+from .models import get_location
 
 
 INDEX_TEMPLATE = 'universe/index.html'
+CONTROL_PANEL = 'universe/control.html'
 
 
 @login_required
 def index(request):
     ship = request.user.ship
     planet = ship.get_orbitting()
-    #TODO stay/travel buttons
     context = dict(
             ship=ship,
             planet=planet,
@@ -132,5 +137,62 @@ def travel(request, dx, dy):
     ship.check_for_event()
 
     ship.save()
+    return redirect('index')
+
+
+@login_required
+def populate(request, x=20, y=20, p=5, forced=False):
+    x = int(x)
+    y = int(y)
+    p = int(p)
+    if request.user.is_staff:
+        try:
+            galaxy = Galaxy.objects.get(galaxy=0)
+            if not forced and (x < galaxy.X_RADIUS or y < galaxy.Y_RADIUS):
+                # Can't shrink the world without a reset!
+                return HttpResponseBadRequest('Must use Force to shink the Galaxy!')
+            xs = list(range(-x,-galaxy.X_RADIUS)) + list(range(galaxy.X_RADIUS + 1, x + 1))
+            ys = list(range(-y,-galaxy.Y_RADIUS)) + list(range(galaxy.Y_RADIUS + 1, y + 1))
+            galaxy.X_RADIUS = x
+            galaxy.Y_RADIUS = y
+        except Galaxy.DoesNotExist:
+            galaxy = Galaxy(galaxy=0, X_RADIUS=x, Y_RADIUS=y)
+            xs = range(-x-1, x+2)
+            ys = range(-y-1, y+2)
+        galaxy.save()
+        if forced:
+            xs = range(-x-1, x+2)
+            ys = range(-y-1, y+2)
+            Planet.objects.all().delete()
+        for x in xs:
+            for y in ys:
+                if random.randint(1,p) == 1:
+                    planet = Planet.create_planet(x=x, y=y)
+                    planet.save()
+        return redirect('controls')
+    return redirect('index')
+
+
+@login_required
+def controls(request):
+    if request.user.is_staff:
+        g = Galaxy.objects.get(galaxy=0)
+        llrs = [
+                [get_location(x, y) for x in range(-g.X_RADIUS, g.X_RADIUS+1)]
+                    for y in reversed(range(-g.Y_RADIUS, g.Y_RADIUS+1))]
+        if settings.DATABASES['default']['ENGINE'].endswith('sqlite3'):
+            StdDev = lambda s: Count(s)
+        planets = Planet.objects.all().aggregate(
+                ave_green=Avg('greenness'),
+                std_green=StdDev('greenness'),
+                ave_minerals=Avg('minerals'),
+                std_minerals=StdDev('minerals'),
+                )
+        context = dict(
+            ships=Ship.objects.count(),
+            llrs=llrs,
+            planets=planets,
+            )
+        return render(request, CONTROL_PANEL, context)
     return redirect('index')
 

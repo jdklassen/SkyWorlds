@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% load universe_tags %}
+
+{% block title %}Sky-Worlds{% endblock %}
+
+{% block content %}
+
+<h1>Ships: {{ ships }}</h1>
+<h1>Greenness: ave={{ planets.ave_green }} std={{ planets.std_green }}</h1>
+<h1>Minerals: ave={{ planets.ave_minerals }} std={{ planets.std_minerals }}</h1>
+
+
+<div class="map">
+    <h1>Map:</h1>
+    <table class="map-table">
+    {% for row in llrs %}
+        <tr>
+        {% for planet in row %}
+            <td>
+            {% if planet %}
+                {% p_icon planet %}
+            {% endif %}
+            </td>
+        {% endfor %}
+        </tr>
+    {% endfor %}
+    </table>
+</div>
+
+
+{% endblock %}
