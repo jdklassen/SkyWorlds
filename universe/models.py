@@ -67,7 +67,7 @@ class Planet(models.Model):
         size = _random_choice(PLANET_SIZES)
         orbit = _random_choice(PLANET_ORBITS)
         greenness = random.randint(0, 100)
-        minerals = min(45,random.randint(0, 100 - greenness))
+        minerals = max(45,random.randint(0, 100 - greenness))
         planet = cls(x=x, y=y, size=size, orbit=orbit, greenness=greenness, minerals=minerals)
         return planet
 
