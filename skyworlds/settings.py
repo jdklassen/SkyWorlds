@@ -29,6 +29,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = []
 if 'OPENSHIFT_APP_DNS' in os.environ:
+    import socket
     ALLOWED_HOSTS = [os.environ['OPENSHIFT_APP_DNS'], socket.gethostname()]
 
 
