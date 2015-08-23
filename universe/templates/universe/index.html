@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load universe_tags %}
+
 {% block title %}Home Page{% endblock %}
 
 {% block content %}
@@ -36,32 +38,32 @@
     <tr>
         <td>Population</td>
         <td>{{ ship.population }} / {{ ship.living_space }}</td>
-        <td><a href="{% url "build" "living_space" %}">Expand Living Space</a></td>
+        <td>{% afford_build "living_space" "Expand Living Space" %}</td>
     </tr>
     <tr>
         <td>Food</td>
         <td>{{ ship.food }} / {{ ship.freezer_space }}</td>
-        <td><a href="{% url "build" "freezer_space" %}">Expand Freezer Space</a></td>
+        <td>{% afford_build "freezer_space" "Expand Freezer Space" %}</td>
     </tr>
     <tr>
         <td>Metal</td>
         <td>{{ ship.metal }} / {{ ship.cargo_space }}</td>
-        <td><a href="{% url "build" "cargo_space" %}">Expand Cargo Space</a></td>
+        <td>{% afford_build "cargo_space" "Expand Cargo Space" %}</td>
     </tr>
     <tr>
         <td>Farms</td>
         <td>{{ ship.farms }}</td>
-        <td><a href="{% url "build" "farm" %}">Build Farm</a></td>
+        <td>{% afford_build "farm" "Build Farm" %}</td>
     </tr>
     <tr>
         <td>Miners</td>
         <td>{{ ship.miners }}</td>
-        <td><a href="{% url "build" "miner" %}">Build Miner</a></td>
+        <td>{% afford_build "miner" "Build Miner" %}</td>
     </tr>
     <tr>
         <td>Total Ship Structure =</td>
         <td>{{ ship.structure }} / {{ ship.structure_tech }}</td>
-        <td><a href="{% url "research" "structure" %}">Research better ship structure</a></td>
+        <td>{% afford_research "structure" "Research better ship structure" %}</td>
     </tr>
 </table>
 <h2>Research</h2>
@@ -75,21 +77,21 @@
         <td>Structure</td>
         <td>{{ ship.structure_tech }}</td>
         <td>
-            <a href="{% url "research" "structure" %}">Reasearch</a>
+            {% afford_research "structure" "Reasearch" %}
         </td>
     </tr>
     <tr>
         <td>Maintainence</td>
         <td>{{ ship.maintainence_tech }}</td>
         <td>
-            <a href="{% url "research" "maintainence" %}">Reasearch</a>
+            {% afford_research "maintainence" "Reasearch" %}
         </td>
     </tr>
     <tr>
         <td>Contentment</td>
         <td>{{ ship.contentment_tech }}</td>
         <td>
-            <a href="{% url "research" "contentment" %}">Reasearch</a>
+            {% afford_research "contentment" "Reasearch" %}
         </td>
     </tr>
 </table>
@@ -106,35 +108,35 @@
         <td>Sub-Surface Planetary Scanner</td>
         <td>{% if ship.has_sub_surface_scanner %}Yes</td><td></td>
         {% else %}No</td><td>
-            <a href="{% url "build" "sub_surface" %}">Build</a>
+            {% afford_build "sub_surface" "Build" %}
         </td>{% endif %}
     </tr>
     <tr>
         <td>Defence System</td>
         <td>{% if ship.has_defense_system %}Yes</td><td></td>
         {% else %}No</td><td>
-            <a href="{% url "build" "defences" %}">Build</a>
+            {% afford_build "defences" "Build" %}
         </td>{% endif %}
     </tr>
     <tr>
         <td>Alien Translator</td>
         <td>{% if ship.has_alien_translator %}Yes</td><td></td>
         {% else %}No</td><td>
-            <a href="{% url "build" "translator" %}">Build</a>
+            {% afford_build "translator" "Build" %}
         </td>{% endif %}
     </tr>
     <tr>
         <td>Particle Shield</td>
         <td>{% if ship.has_particle_shield %}Yes</td><td></td>
         {% else %}No</td><td>
-            <a href="{% url "build" "shield" %}">Build</a>
+            {% afford_build "shield" "Build" %}
         </td>{% endif %}
     </tr>
     <tr>
         <td>Omni Anti-Virus Medication</td>
         <td>{% if ship.has_omni_anti_virus %}Yes</td><td></td>
         {% else %}No</td><td>
-            <a href="{% url "build" "anti_virus" %}">Build</a>
+            {% afford_build "anti_virus" "Build" %}
         </td>{% endif %}
     </tr>
 </table>

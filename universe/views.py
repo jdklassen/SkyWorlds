@@ -70,26 +70,16 @@ def build(request, item_name):
 @login_required
 def research(request, tech_name):
     ship = request.user.ship
-    base_cost = ship.COST_RESEARCH.get(tech_name, 0)
+    cost = ship.research_cost(tech_name)
     if tech_name not in ship.COST_RESEARCH:
         return redirect('index')
-    elif tech_name == 'structure':
-        cost = base_cost * (ship.structure_tech + -7)
-        if cost > ship.research:
-            return redirect('index')
-        ship.research -= cost
+
+    ship.research -= cost
+    if tech_name == 'structure':
         ship.structure_tech += 1
     elif tech_name == 'maintainence':
-        cost = base_cost * (ship.maintainence_tech + 1)
-        if cost > ship.research:
-            return redirect('index')
-        ship.research -= cost
         ship.maintainence_tech += 1
     elif tech_name == 'contentment':
-        cost = base_cost * (ship.contentment_tech + 1)
-        if cost > ship.research:
-            return redirect('index')
-        ship.research -= cost
         ship.contentment_tech += 1
     ship.save()
     return redirect('index')

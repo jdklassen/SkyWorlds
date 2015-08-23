@@ -214,6 +214,17 @@ class Ship(models.Model):
         maintainence=10,
         contentment=10,
     )
+    BASE_TECH = dict(
+        structure=-7,
+        maintainence=1,
+        contentment=1,
+    )
+    def research_cost(self, tech):
+        base_cost = self.COST_RESEARCH.get(tech, 0)
+        base_tech = self.BASE_TECH.get(tech, 0)
+        current_tech = getattr(self, tech + '_tech', 0)
+        cost = base_cost * (current_tech + base_tech)
+        return cost
 
 
     def get_orbitting(self):
@@ -281,7 +292,7 @@ def get_effects_travel(ship):
         effects.append(('Farm Maintenance', 'metal', '-', -farm_maint))
     # Always keep the last farm:
     if farm_decay - ship.farms == 0:
-        farm_decay -= 0
+        farm_decay -= 1
     if farm_decay > 0:
         effects.append(('Farm Exhaustion', 'farms', '-', -int(farm_decay/2) - 1))
 
