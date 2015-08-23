@@ -28,6 +28,8 @@ if 'OPENSHIFT_SECRET_TOKEN' in os.environ:
 DEBUG = False
 
 ALLOWED_HOSTS = []
+if 'OPENSHIFT_APP_DNS' in os.environ:
+    ALLOWED_HOSTS = [os.environ['OPENSHIFT_APP_DNS'], socket.gethostname()]
 
 
 # Application definition
