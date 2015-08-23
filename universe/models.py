@@ -35,7 +35,7 @@ PLANET_SIZES = (
 PLANET_ORBITS = (
     (0, 'unbearably hot and spinning close its sun'),
     (1, 'warm due to its proximity to the sun'),
-    (2, 'with a pleasant warthm from the sun'),
+    (2, 'with a pleasant warmth from the sun'),
     (3, 'of a temperate climate'),
     (4, 'somewhat cooled by the distance to its sun'),
     (5, 'rather colder than preferred'),
